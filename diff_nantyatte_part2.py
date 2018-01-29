@@ -18,31 +18,76 @@ fr_b = open(readfile_b, 'r')
 fw = open(output, 'w')
 
 # 変数の定義
-set_diff = set()
-lst_output = list()
+lst_data_a = list()
+lst_data_b = list()
+set_a = set()
+set_b = set()
 
 #検索元記載の比較要素が重複している可能性を考慮して一度集合にする
-for line in range(num_line_a):
-	str_line = fr_a.readline()
-	str_line = str_line.replace('\n','').replace('\r','')
-	#print(str(line) + '行目　' + str_line)
-	set_diff.add(str_line)
+for line in fr_a:
+	str_line = line.replace('\n','').replace('\r','').replace(' ','')
+	lst_data_a.append(str_line)
+set_a = sorted(set(lst_data_a), key = lst_data_a.index)    # 順番を保持したまま集合化する。
 
-# 一度集合にした重複していない要素を取り出したい
-lst_output = list(set_diff)
+# 比較先のファイルについても同様にする。
+for line in fr_b:
+	str_line = line.replace('\n','').replace('\r','').replace(' ','')
+	lst_data_b.append(str_line)
+set_b = sorted(set(lst_data_b), key = lst_data_b.index)    # 順番を保持したまま集合化する。
 
-str_all = fr_b.read()
+lst_data_a = list(set_a)
+lst_data_b = list(set_b)
 
-#for i in range(len(lst_output)):
-for i in lst_output:
-	# True or False
-	rst = str(i) in str_all
-	if rst == False:
-		print(str(i) + 'は無い')
-		fw.write(str(i) + 'は無い' + '\n')
-	if rst == True:
-		print(str(i) + 'は有る')
-		fw.write(str(i) + 'は有る' + '\n')
+
+#####################
+#  以下検索処理
+#####################
+print(readfile_a + '  側にあるが ' + readfile_b + ' 側に無いものを検索する')
+fw.write(readfile_a + '  側にあるが ' + readfile_b + ' 側に無いものを検索する\n' )
+
+# まず左側のファイルを基準に要素の有無を検索
+for i in range(len(lst_data_a)):
+	rst_flg = 0
+	for j in range(len(lst_data_b)):		
+		if str(lst_data_a[i]) == str(lst_data_b[j]):
+			rst_flg = 1
+
+	if rst_flg == 0:
+		print(str(lst_data_a[i]) + ' は無い')
+		fw.write(str(lst_data_a[i]) + ' は無い \n')
+
+print(readfile_b + '  側にあるが ' + readfile_a + ' 側に無いものを検索する')
+fw.write(readfile_b + '  側にあるが ' + readfile_a + ' 側に無いものを検索する\n' )
+
+# 次に右側のファイルを基準に要素の有無を検索
+for j in range(len(lst_data_b)):
+	rst_flg = 0
+	for i in range(len(lst_data_a)):
+		if str(lst_data_b[j]) == str(lst_data_a[i]):
+			rst_flg = 1
+			break
+	if rst_flg == 0:
+		print(str(lst_data_b[j]) + ' は無い')
+		fw.write(str(lst_data_b[j]) + ' は無い \n')
 fr_a.close()
 fr_b.close()
-fw.close()		
+fw.close()
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
